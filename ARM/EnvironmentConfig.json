@@ -1,0 +1,77 @@
+{
+    "Version":"01",
+    "Azure":{
+        "ResourceGroup":"Exchange-RG",
+        "VirtualNetwork":{
+            "name":"vnet",
+            "subnets":[
+                {
+                    "name":"subnet1",
+                    "addressPrefix": "10.0.0.0/24"
+                },
+                {
+                    "name":"subnet2",
+                    "addressPrefix": "10.0.1.0/24"
+                }
+            ]
+
+        },
+        "VirtualMachines":[
+            {
+                "name":"dc01",
+                "size":"D2",
+                "role":"DomainController",
+                "IP":"10.0.0.10",
+                "subnet":"subnet-0"
+            },
+            {
+                "name":"dc02",
+                "size":"D2",
+                "role":"DomainController",
+                "IP":"10.0.1.10",
+                "subnet":"subnet-1"
+            },
+            {
+                "name":"hv01",
+                "size":"D2s_v3",
+                "role":"Hyper-V",
+                "IP":"10.0.0.11",
+                "subnet":"subnet-0"
+            }, 
+ 
+            {
+                "name":"hv02",
+                "size":"D2s_v3",
+                "role":"Hyper-V",
+                "IP":"10.0.1.11",
+                "subnet":"subnet-1"
+            },
+            {
+                "name":"exch03",
+                "size":"D2",
+                "role":"ExchangeMailbox",
+                "IP":"10.0.0.12",
+                "subnet":"subnet-0"
+            },
+            {
+                "name":"exch04",
+                "size":"D2",
+                "role":"ExchangeMailbox",
+                "IP":"10.0.1.12",
+                "subnet":"subnet-1"
+            },
+            {
+                "name":"cl01",
+                "size":"D2s_v3",
+                "role":"Client",
+                "IP":"10.0.0.20",
+                "subnet":"subnet-0"
+            }    
+        ]
+
+    },
+    "ActiveDirectory":{
+        "DomainName":"domain.name"
+
+    }
+}

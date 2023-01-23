@@ -1,0 +1,109 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+
+        "guid":{
+            "type": "string"
+        },
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "PrivateIP": {
+            "type": "string",
+            "metadata": {
+                "description": "Private IP of the VM. Needs to be in 10.0.0.x subnet"
+            }
+        },
+        "subnet": {
+            "type": "string",
+            "metadata": {
+                "description": "VM subnet"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+
+
+             {
+            "name": "[parameters('vmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2020-12-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('vmName'), '.nic')]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D2s_v3"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        }
+                    },
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2019-datacenter-gensecond",
+                        "version": "latest"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'),'.nic'))]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('vmName')]",
+                    "adminUsername": "adminradul",
+                    "adminPassword": "Windows1test1"
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                }
+            },
+            "tags": {
+                "guid": "[parameters('guid')]"
+            },
+            "zones": []
+        },
+        {
+            "name": "[concat(parameters('vmName'),'.nic')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-10-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "[concat(parameters('vmName'),'-IP')]",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', concat(parameters('guid'),'.vnet'), parameters('subnet'))]"
+                            },
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('PrivateIP')]",
+                            "privateIPAddressVersion": "IPv4"
+                         }
+                    }
+                ]
+            },
+            "tags": {
+                "guid": "[parameters('guid')]"
+            }
+        }
+ 
+    ],
+    "outputs": {}
+}
